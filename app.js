@@ -10,11 +10,19 @@ const serverPort = process.env.PORT;
 // middleware functionalities
 app.use(express.static('public'));
 
+////////////////////
+//  GET requests  //
+////////////////////
 app.get('/', (req, res) => {
     // checks here if there's an existing session
     // else redirect to the login page
     res.redirect('login.html');
 });
+
+
+/////////////////////
+//  POST requests  //
+/////////////////////
 
 // start server
 app.listen(serverPort, serverIP, () => {
