@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins');
+
+:root {
+    --bgcolor: #EEF1CB;
+    --bgshadow: #a2a48b;
+    --positive: #21AC2F;
+
+    --menu: #4A526B;
+    --menush: #353a47;
+    --msgcon: #2B2C31;
+    --content: #494949;
+}
+
+* {
+    font-family: Poppins, Arial;
+}
+
+body {
+    background-color: var(--bgcolor);
+}
+
+main {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+    top: 0; left: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+button {
+    cursor: pointer;
+}

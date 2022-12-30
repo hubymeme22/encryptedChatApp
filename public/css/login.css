@@ -1,0 +1,48 @@
+@import url('./index.css');
+
+main > div.form {
+    background-color: white;
+    box-shadow: 0px 4px 15px 0px var(--bgshadow);
+    border-radius: 20px;
+    width: 300px;
+    padding: 20px;
+}
+
+main > div.form {
+    text-align: center;
+}
+
+main > div.form > input {
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid rgb(87, 87, 87);
+    width: calc(100% - 10px);
+
+    margin-top: 10px;
+}
+
+main > div.form > input:focus {
+    outline: none;
+}
+
+main > div.form > button {
+    background-color: var(--positive);
+    color: white;
+    width: calc(50% - 20px);
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+}
+
+main > div.form > button:hover {
+    background-color: rgb(173, 253, 173);
+    color: black;
+}
+
+main > div.form > button.signup {
+    background-color: rgb(64, 93, 210);
+}
+
+main > div.form > button.signup:hover {
+    background-color: rgb(194, 201, 241);
+}
