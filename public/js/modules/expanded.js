@@ -9,4 +9,16 @@ function login(
     postRequest('/login', data, accept, reject);
 }
 
-export { login }
+function signup(
+    data={
+        'username': '',
+        'name': '',
+        'key': '',
+        'password': '' },
+    accept=acceptCallbackFormat,
+    reject=rejectCallbackFormat) {
+
+    postRequest('/signup', data, accept, reject);
+}
+
+export { login, signup }
