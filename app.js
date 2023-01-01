@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 const Account = require('./models/account');
 const middleware = require('./middleware/validate');
@@ -51,6 +52,43 @@ app.get('/', (req, res) => {
 /////////////////////
 //  POST requests  //
 /////////////////////
+// logs in the specified account
+app.post('/login', middleware.validateRegister, (req, res) => {
+    // if logged in, proceed to making a session
+    const creds = req.body;
+    const loggedIn = (userData) => {
+        res.json({
+            existing: true,
+            created: false,
+            data: userData[0],
+            token: jwt.sign({'userData': userData[0]}, process.env.SIGNATURE_KEY),
+            error: null
+        });
+    };
+
+    const notLoggedIn = () => {
+        res.json({
+            existing: false,
+            created: false,
+            data: null,
+            token: null,
+            error: null
+        });
+    };
+
+    const serverError = (error) => {
+        res.status(500);
+        res.json({
+            existing: false,
+            created: false,
+            data: null,
+            error: error
+        });
+    };
+
+    dbConn.isAccountExisting(creds.username, creds.password, loggedIn, notLoggedIn, serverError);
+});
+
 // registers the new account added by the user
 app.post('/signup', middleware.validateRegister, (req, res) => {
     const creds = req.body;

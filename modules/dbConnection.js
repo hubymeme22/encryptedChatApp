@@ -26,12 +26,22 @@ function registerAccount(credentialsJSON,
     newAccount.save().then(successful).catch(error);
 }
 
+// checks if the credentials matches
+function isAccountExisting(username, password,
+    existingCallback=(userData) => {},
+    notExistingCallback=() => {},
+    serverError=(error) => {}) {
 
-function loginAccount() {
+    Accounts.find({ 'username': username, 'password': password })
+        .then((response) => {
+            if (response.length > 0) existingCallback(response);
+            else notExistingCallback();
+        })
+        .catch(serverError);
 }
 
-
 module.exports = {
+    isAccountExisting,
     isUserExisting,
     registerAccount
 };
