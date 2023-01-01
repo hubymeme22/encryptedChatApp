@@ -53,6 +53,7 @@ loginButton.onclick = () => {
         // use the token as cookie
         setTimeout(() => {
             document.cookie = `token=${jsonData.token}; path=/`;
+            window.location.href = '/chatroom';
         }, 500);
     };
 

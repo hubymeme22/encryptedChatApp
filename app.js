@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 const Account = require('./models/account');
 const middleware = require('./middleware/validate');
@@ -37,7 +38,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // middleware functionalities
 app.use(express.json());
-app.use(express.static('public'));
+app.use(cookieParser());
 
 ////////////////////
 //  GET requests  //
@@ -48,6 +49,23 @@ app.get('/', (req, res) => {
     res.redirect('login.html');
 });
 
+app.get('/chatroom.html', middleware.validatePagePermission, (req, res, next) => {
+    console.log(res.allowedData);
+    next();
+});
+
+// redirectors
+app.get('/chatroom', (req, res, next) => {
+    res.redirect('/chatroom.html')
+});
+
+app.get('/login', (req, res) => {
+    res.redirect('/login.html');
+});
+
+app.get('/signup', (req, res) => {
+    res.redirect('/signup.html');
+});
 
 /////////////////////
 //  POST requests  //
@@ -140,3 +158,7 @@ app.post('/signup', middleware.validateRegister, (req, res) => {
     // do the callbacks above for certain conditions
     dbConn.isUserExisting(creds.username, accountExists, accountDNExist, serverError);
 });
+
+// called here so we first check above
+// before rendering the pages here
+app.use(express.static('public'));
