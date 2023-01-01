@@ -72,7 +72,11 @@ app.post('/signup', (req, res) => {
             // creates a new account
             const newAccount = new Account({
                 username: creds.username,
-                password: creds.password
+                password: creds.password,
+                accountDetails: {
+                    'name': creds.name,
+                    'key': creds.key
+                }
             });
 
             // saves the data to the database
