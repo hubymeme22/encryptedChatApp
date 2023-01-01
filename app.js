@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const Account = require('./models/account');
+const middleware = require('./middleware/validate');
+const dbConn = require('./modules/dbConnection');
+
 const app = express();
 
 // environment variables
@@ -48,64 +51,54 @@ app.get('/', (req, res) => {
 /////////////////////
 //  POST requests  //
 /////////////////////
-app.post('/signup', (req, res) => {
+// registers the new account added by the user
+app.post('/signup', middleware.validateRegister, (req, res) => {
     const creds = req.body;
+    const serverError = (error) => {
+        res.json({
+            existing: false,
+            created: false,
+            data: null,
+            error: null
+        }).status(500);
+    };
 
-    // validate credentials format here... pls
-    // TODO: credentials value validation here
+    const accountExists = (response) => {
+        res.json({
+            existing: true,
+            created: false,
+            data: null,
+            error: null
+        });
+    }
 
-    // checks if the specified username has already been used
-    Account.find({ username: creds.username })
-        .then((response) => {
-
-            // account already exists
-            if (response.length > 0) {
-                res.json({
-                    existing: true,
-                    created: false,
-                    data: null,
-                    error: null
-                });
-                return;
+    // registers the account if this
+    // does not yet exist
+    const accountDNExist = () => {
+        dbConn.registerAccount({
+            username: creds.username,
+            password: creds.password,
+            accountDetails: {
+                'name': creds.name,
+                'key': creds.key
             }
-
-            // creates a new account
-            const newAccount = new Account({
-                username: creds.username,
-                password: creds.password,
-                accountDetails: {
-                    'name': creds.name,
-                    'key': creds.key
-                }
+        }, (response) => {
+            res.json({
+                existing: false,
+                created: true,
+                data: response,
+                error: null
             });
-
-            // saves the data to the database
-            newAccount.save()
-                .then((response) => {
-                    res.json({
-                        existing: false,
-                        created: true,
-                        data: response,
-                        error: null
-                    });
-                })
-
-                .catch((error) => {
-                    res.json({
-                        existing: false,
-                        created: false,
-                        data: null,
-                        error: error
-                    });
-                });
-        })
-
-        .catch((error) => {
+        }, (error) => {
             res.json({
                 existing: false,
                 created: false,
                 data: null,
-                error: null
-            }).status(500);
-        });
+                error: error
+            });
+        })
+    };
+
+    // do the callbacks above for certain conditions
+    dbConn.isUserExisting(creds.username, accountExists, accountDNExist, serverError);
 });
