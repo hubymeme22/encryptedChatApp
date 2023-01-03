@@ -1,0 +1,71 @@
+div.popup-container {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%; width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+div.form {
+    border-radius: 20px;
+    background-color: white;
+    width: 25%;
+}
+
+div.form > div.header {
+    padding: 15px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    background-color: #333333;
+    color: white;
+}
+
+div.form > div.body {
+    padding: 10px;
+    text-align: center;
+
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background-color: whitesmoke;
+}
+
+div.form > div.body > input {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #333333;
+    height: 15px;
+    width: 80%;
+}
+
+div.form > div.body > button {
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    width: 40%;
+}
+
+div.form > div.body > p {
+    margin-top: 10px;
+}
+
+div.form > div.body > button.check {
+    margin-top: 10px;
+    background-color: #34E16F;
+}
+
+div.form > div.body > button.check:active {
+    background-color: #94f5b5;
+}
+
+div.form > div.body > button.cancel {
+    margin-top: 10px;
+    background-color: #f26565;
+}
+
+div.form > div.body > button.cancel:active {
+    background-color: #fdaaaa;
+}

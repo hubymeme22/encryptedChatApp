@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="css/chatroom.css">
+    <link rel="stylesheet" href="css/popup.css">
+
     <script src="js/chatroom.js" defer></script>
     <title>Simple Chat - Chatrooms</title>
 </head>
@@ -35,7 +37,7 @@
                     <button>@wrapper</button>
                 </div>
                 <div class="add-chat-container">
-                    <button>+</button>
+                    <button id="addContact">+</button>
                 </div>
             </div>
 
@@ -64,5 +66,21 @@
             </div>
         </div>
     </main>
+
+    <div class="popup-container" id="popup" style="display: none;">
+        <div class="form">
+            <div class="header"><b>Add new Chat</b></div>
+            <div class="body">
+                <input type="text" placeholder="Username">
+                <input type="text" placeholder="Key">
+
+                <p style="color: orange;">Combination does not exist</p>
+
+                <button class="check" id="check">Check</button>
+                <button class="cancel" id="cancel">Cancel</button>
+                <br><br>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

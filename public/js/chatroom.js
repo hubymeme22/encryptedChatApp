@@ -8,6 +8,14 @@ function displayName(name) {
     document.getElementById('name').innerText = name;
 }
 
+function displayPopup() {
+    document.getElementById('popup').style.display = '';
+}
+
+function hidePopup() {
+    document.getElementById('popup').style.display = 'none';
+}
+
 // add the specified username to contacts
 function addChatUser(chatUsername) {
     const chatList = document.getElementById('chat-list');
@@ -32,6 +40,13 @@ document.getElementById('logout').onclick = () => {
     logout();
 };
 
+document.getElementById('addContact').onclick = () => {
+    displayPopup();
+};
+
+document.getElementById('cancel').onclick = () => {
+    hidePopup();
+};
 
 ///////////////////////
 //  initializations  //
