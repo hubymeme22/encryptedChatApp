@@ -48,7 +48,7 @@ loginButton.onclick = () => {
         // save the token and user info
         displayMessage('Logged in');
         window.localStorage.setItem('token', jsonData.token);
-        window.localStorage.setItem('raw-data', jsonData.data);
+        window.localStorage.setItem('raw-data', JSON.stringify(jsonData.data));
 
         // use the token as cookie
         setTimeout(() => {

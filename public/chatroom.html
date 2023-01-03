@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="css/chatroom.css">
+    <script src="js/chatroom.js" defer></script>
     <title>Simple Chat - Chatrooms</title>
 </head>
 <body>
@@ -14,14 +15,14 @@
             <div class="profile">
                 <img src="#" alt=""/>
                 <div class="user-details">
-                    <h3>Username</h3>
-                    <p style="color: gray;">OptionalName</p>
+                    <h3 id="username">Username</h3>
+                    <p id="name" style="color: gray;">OptionalName</p>
                 </div>
             </div>
 
             <div class="message">
                 <div class="header"><h3>Messages</h3></div>
-                <div class="chat-list">
+                <div class="chat-list" id="chat-list">
                     <button class="selected">@moeLester</button>
                     <button>@moeLester</button>
                     <button>@moeLester</button>
@@ -40,7 +41,7 @@
 
             <div class="options">
                 <button class="account">Account</button>
-                <button class="logout">Logout</button>
+                <button class="logout" id="logout">Logout</button>
             </div>
         </div>
 
