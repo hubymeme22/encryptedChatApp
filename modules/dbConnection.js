@@ -40,7 +40,44 @@ function isAccountExisting(username, password,
         .catch(serverError);
 }
 
+// adds new contact to the account
+function addContact(accountUsername, contactUsername, key,
+    existingCallback=(userData) => {},
+    notExistingCallback=() => {},
+    serverError=(error) => {}) {
+
+    // upsert the data provided
+    const findAccount = { 'username': accountUsername };
+    const updateQuery = { '$set': { [`contacts.${contactUsername}`]: key }};
+    const upsert = { new: true, upsert: true };
+
+    Accounts.findOneAndUpdate(findAccount, updateQuery, upsert)
+        .exec((error, userData) => {
+            if (error) return serverError(error);
+            if (!userData) return notExistingCallback();
+
+            return existingCallback(userData);
+        });
+}
+
+// checks if the username + key combination does exist
+function checkCombination(contactUsername, key,
+    existingCallback=(userID) => {},
+    notExistingCallback=() => {},
+    serverError=(error) => {}) {
+
+    Accounts.exists({ username: contactUsername, 'accountDetails.key': key })
+        .then(userID => {
+            if (!userID) return notExistingCallback();
+            return existingCallback(userID);
+        })
+        .catch(serverError);
+}
+
+
 module.exports = {
+    addContact,
+    checkCombination,
     isAccountExisting,
     isUserExisting,
     registerAccount

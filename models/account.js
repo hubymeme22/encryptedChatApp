@@ -2,19 +2,15 @@ const mongoose = require('mongoose');
 
 // document structure to send/recieve
 const accountSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true
-    },
-
-    password: {
-        type: String,
-        required: true
-    },
-
-    accountDetails: {
+    username: String,
+    password: String,
+    accountDetails: Map,
+    contacts: {
         type: Map,
-        required: false
+        contactUsername: {
+            type: Map,
+            key: String
+        }
     }
 }, { timestamps: true });
 

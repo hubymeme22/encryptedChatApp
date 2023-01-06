@@ -48,7 +48,34 @@ function validatePagePermission(req, res, next) {
     });
 }
 
+// validates the token for POST requests
+function validatePOSTPermission(req, res, next) {
+    // get the cookie and check if this cookie is valid
+    const token = req.headers.koala;
+    if (token == null) {
+        res.status(403);
+        res.dataAllowed = false;
+        return;
+    }
+
+    // verifies the token
+    jwt.verify(token, process.env.SIGNATURE_KEY, (err, decoded) => {
+        if (err) {
+            res.status(403);
+            res.dataAllowed = false;
+            return;
+        }
+
+        // allow the process
+        res.dataAllowed = true;
+        res.allowedData = decoded.userData;
+        next();
+    });
+}
+
+
 module.exports = {
     validatePagePermission,
+    validatePOSTPermission,
     validateRegister
 };

@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
-const Account = require('./models/account');
 const middleware = require('./middleware/validate');
 const dbConn = require('./modules/dbConnection');
 
@@ -50,7 +49,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/chatroom.html', middleware.validatePagePermission, (req, res, next) => {
-    console.log(res.allowedData);
     next();
 });
 
@@ -137,7 +135,8 @@ app.post('/signup', middleware.validateRegister, (req, res) => {
             accountDetails: {
                 'name': creds.name,
                 'key': creds.key
-            }
+            },
+            contacts: {}
         }, (response) => {
             res.json({
                 existing: false,
@@ -157,6 +156,100 @@ app.post('/signup', middleware.validateRegister, (req, res) => {
 
     // do the callbacks above for certain conditions
     dbConn.isUserExisting(creds.username, accountExists, accountDNExist, serverError);
+});
+
+// adds a new contact to the user
+app.post('/add-contact', middleware.validatePOSTPermission, (req, res) => {
+    // checks if proper parameters are set
+    const params = req.body;
+    if (params.contactUsername == null || params.key == null)
+        return res.json({
+            existing: false,
+            added: false,
+            data: null,
+            error: null,
+            token: null,
+        });
+
+    // checks if the request has permission
+    if (!res.dataAllowed)
+        return res.json({
+            existing: false,
+            added: false,
+            data: null,
+            error: null,
+            token: null,
+        });
+
+
+    // checks if the contact is itself
+    const accountUsername = res.allowedData.username;
+    if (accountUsername == params.contactUsername)
+        return res.json({
+            existing: true,
+            added: false,
+            data: null,
+            error: null,
+            token: null,
+        });
+
+
+    const serverError = (error) => {
+        res.status(500);
+        res.json({
+            existing: false,
+            added: false,
+            data: null,
+            error: error,
+            token: null
+        });
+    }
+
+    const combinationDNE = () => {
+        res.json({
+            existing: false,
+            added: false,
+            data: null,
+            error: error,
+            token: null
+        });
+    };
+
+    // add to contacts if combination exists
+    const combinationMatched = (userID) => {
+        dbConn.addContact(accountUsername, params.contactUsername, params.key,
+            function (userData) {
+                res.json({
+                    existing: true,
+                    added: true,
+                    data: userData,
+                    error: null,
+                    token: jwt.sign({userData}, process.env.SIGNATURE_KEY)
+                });
+            },
+            function () {
+                res.json({
+                    existing: true,
+                    added: false,
+                    data: userData,
+                    error: error,
+                    token: null
+                });
+            },
+            function (error) {
+                res.status(500);
+                res.json({
+                    existing: true,
+                    added: false,
+                    data: null,
+                    error: error,
+                    token: null
+                });
+            });
+    };
+
+    // checks the existence of the combination
+    dbConn.checkCombination(req.body.contactUsername, req.body.key, combinationMatched, combinationDNE, serverError);
 });
 
 // called here so we first check above
