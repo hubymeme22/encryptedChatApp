@@ -1,4 +1,4 @@
-import { postRequest, acceptCallbackFormat, rejectCallbackFormat } from "./requests.js";
+import { postRequest, postTokenRequest, acceptCallbackFormat, rejectCallbackFormat } from "./requests.js";
 
 // use post request to login the username and password from the data
 function login(
@@ -21,4 +21,13 @@ function signup(
     postRequest('/signup', data, accept, reject);
 }
 
-export { login, signup }
+function addContact(
+    data ={ 'usernameContact': '', 'key': '1234'},
+    accept=acceptCallbackFormat,
+    reject=rejectCallbackFormat) {
+
+    const token = window.localStorage.getItem('token');
+    postTokenRequest('/add-contact', token, data, accept, reject);
+}
+
+export { addContact, login, signup }

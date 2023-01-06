@@ -24,7 +24,7 @@ function postTokenRequest(route='/', token='', data={}, accepted_callback=accept
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'token': token
+            'koala': token
         },
         body: JSON.stringify(data)})
 

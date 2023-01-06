@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/chatroom.css">
     <link rel="stylesheet" href="css/popup.css">
 
-    <script src="js/chatroom.js" defer></script>
+    <script src="js/chatroom.js" type="module" defer></script>
     <title>Simple Chat - Chatrooms</title>
 </head>
 <body>
@@ -25,7 +25,7 @@
             <div class="message">
                 <div class="header"><h3>Messages</h3></div>
                 <div class="chat-list" id="chat-list">
-                    <button class="selected">@moeLester</button>
+                    <!-- <button class="selected">@moeLester</button>
                     <button>@moeLester</button>
                     <button>@moeLester</button>
                     <button>@moeLester</button>
@@ -34,7 +34,7 @@
                     <button>@moeLester</button>
                     <button>@moeLester</button>
                     <button>@moeLester</button>
-                    <button>@wrapper</button>
+                    <button>@wrapper</button> -->
                 </div>
                 <div class="add-chat-container">
                     <button id="addContact">+</button>
@@ -53,8 +53,8 @@
                     <img src="#" alt="">
                 </div>
                 <span>
-                    <h3>@MoeLester</h3>
-                    <p style="color: gray;">Sample</p>
+                    <h3 id="contact-username">@MoeLester</h3>
+                    <p style="color: gray;" id="contact-name">Sample</p>
                 </span>
             </div>
             <div class="chats-content">
@@ -71,10 +71,10 @@
         <div class="form">
             <div class="header"><b>Add new Chat</b></div>
             <div class="body">
-                <input type="text" placeholder="Username">
-                <input type="text" placeholder="Key">
+                <input type="text" placeholder="Username" id="usernameContact">
+                <input type="text" placeholder="Key" id="key">
 
-                <p style="color: orange;">Combination does not exist</p>
+                <p style="color: orange;" id="contact-add-message"></p>
 
                 <button class="check" id="check">Check</button>
                 <button class="cancel" id="cancel">Cancel</button>
