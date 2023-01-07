@@ -46,9 +46,13 @@ function addChatUser(chatUsername) {
 
     // add onclick event
     clickableUser.onclick = () => {
+        if (currentButton == clickableUser)
+            return;
+
         clickableUser.classList.add('selected');
         if (currentButton != null)
             currentButton.classList.remove('selected');
+
         currentButton = clickableUser;
         displayChatDetail(`@${chatUsername}`, 'sampleUser');
     };
@@ -101,6 +105,8 @@ document.getElementById('check').onclick = () => {
         } else {
             displayContactAddMessage('Key does not match the user\'s key');
         }
+    }, (error) => {
+        displayChatDetail('Server Error Occured');
     });
 };
 
