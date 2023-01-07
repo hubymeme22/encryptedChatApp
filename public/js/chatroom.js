@@ -1,4 +1,4 @@
-import { addContact } from './modules/expanded.js';
+import { addContact, getUserDetails } from './modules/expanded.js';
 
 // retrieve the user information
 let userInfo = window.localStorage.getItem('raw-data');
@@ -54,7 +54,15 @@ function addChatUser(chatUsername) {
             currentButton.classList.remove('selected');
 
         currentButton = clickableUser;
-        displayChatDetail(`@${chatUsername}`, 'sampleUser');
+        getUserDetails(chatUsername,
+            function (jsonData) {
+                console.log(jsonData);
+                if (jsonData.existing)
+                    displayChatDetail(`@${chatUsername}`, jsonData.data.accountDetails.name);    
+            },
+            function (error) {
+                console.log(error);
+            });
     };
 }
 

@@ -33,8 +33,16 @@ function postTokenRequest(route='/', token='', data={}, accepted_callback=accept
     .catch(reject_callback);
 }
 
+function getRequest(route='/', accepted_callback=acceptCallbackFormat, reject_callback=rejectCallbackFormat) {
+    fetch(url + route)
+        .then(response => response.json())
+        .then(accepted_callback)
+        .catch(reject_callback);
+}
+
 export {
     acceptCallbackFormat,
+    getRequest,
     rejectCallbackFormat,
     postRequest,
     postTokenRequest

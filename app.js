@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const Account = require('./models/account');
 
 const middleware = require('./middleware/validate');
 const dbConn = require('./modules/dbConnection');
@@ -63,6 +64,33 @@ app.get('/login', (req, res) => {
 
 app.get('/signup', (req, res) => {
     res.redirect('/signup.html');
+});
+
+// gets other details of the account
+app.get('/public-details/:username', (req, res) => {
+    if (req.params.username == null)
+        return res.json({
+            existing: false,
+            data: null,
+            error: null
+        });
+
+    // additional details will be added here in the future
+    Account.findOne({username: req.params.username}, 'username accountDetails.name')
+        .then(userData => {
+            res.json({
+                existing: true,
+                data: userData,
+                error: null
+            });
+        })
+        .catch(error => {
+            res.json({
+                existing: true,
+                data: null,
+                error: error
+            });
+        })
 });
 
 /////////////////////
