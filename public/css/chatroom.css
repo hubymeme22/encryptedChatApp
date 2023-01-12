@@ -64,6 +64,52 @@ div.chat-container > div.chats-content {
     border-bottom: 1px solid #787878;
 }
 
+div.chats-content > div.no-message {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: grey;
+}
+
+div.chats-content > div.wrapper {
+    display: table-cell;
+    vertical-align: bottom;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+div.chats-content > div.wrapper > div > div.my-message-container {
+    padding: 20px;
+    text-align: right;
+}
+
+div.chats-content > div.wrapper > div > div.my-message-container > div.my-message {
+    display: inline-block;
+    max-width: 50%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgb(128, 128, 251);
+    font-size: 10pt;
+    text-align: left;
+}
+
+div.chats-content > div.wrapper > div > div.contact-message-container {
+    padding: 20px;
+}
+
+div.chats-content > div.wrapper > div > div.contact-message-container > div.contact-message {
+    display: inline-block;
+    max-width: 50%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgb(164, 164, 164);
+    font-size: 10pt;
+    text-align: left;
+}
+
 div.chat-container > div.action-content {
     /* background-color: #3F3D3D; */
     margin: 0 auto;
@@ -107,6 +153,10 @@ div.action-content > button {
 
     height: 35px;
     width: 100%;
+}
+
+div.action-content > button:active {
+    background-color: #69f08f;
 }
 
 div.profile {

@@ -63,7 +63,43 @@ function addChatUser(chatUsername) {
             function (error) {
                 console.log(error);
             });
+
+        // hide the 'no message' display if not yet hidden and display the chat
+        document.getElementById('no-message').style.display = 'none';
+        document.getElementById('wrapper').style.display = '';
     };
+}
+
+// displays the message sent on the screen
+function displaySentMessage(message) {
+    const contentContainer = document.getElementById('scrollable');
+    const chatContainer = document.createElement('div');
+    const messageHolder = document.createElement('div');
+
+    chatContainer.classList.add('my-message-container');
+    messageHolder.classList.add('my-message');
+    messageHolder.innerText = message;
+
+    chatContainer.appendChild(messageHolder);
+    contentContainer.appendChild(chatContainer);
+
+    const scrollable = document.getElementById('wrapper');
+    scrollable.scrollTop = scrollable.scrollHeight;
+}
+
+// displays message that is recieved from the server
+function displayRecievedMessage(message) {
+    const contentContainer = document.getElementById('scrollable');
+    const chatContainer = document.createElement('div');
+    const messageHolder = document.createElement('div');
+
+    chatContainer.classList.add('contact-message-container');
+    messageHolder.classList.add('contact-message');
+
+    messageHolder.innerText = message;
+
+    chatContainer.appendChild(messageHolder);
+    contentContainer.appendChild(chatContainer);
 }
 
 function getContactValues() {
@@ -95,6 +131,17 @@ document.getElementById('addContact').onclick = () => {
 document.getElementById('cancel').onclick = () => {
     hidePopup();
 };
+
+document.getElementById('send').onclick = () => {
+    const messageBox = document.getElementById('message-input');
+    displaySentMessage(messageBox.value);
+    messageBox.value = '';
+};
+
+document.getElementById('message-input').addEventListener('keyup', (event) => {
+    if (event.key == 'Enter')
+        document.getElementById('send').onclick();
+});
 
 // events with permissions here
 document.getElementById('check').onclick = () => {
@@ -131,3 +178,27 @@ contacts.forEach(usernameContact => {
     console.log(usernameContact);
     addChatUser(usernameContact);
 });
+
+// hardcoded fixed height and max-height
+const wrapper = document.getElementById('wrapper');
+const scrollable = document.getElementById('scrollable');
+
+const calculatedHeight = Math.floor(window.innerHeight * 0.720);
+const calculatedWidth = (window.innerWidth * 0.684);
+
+wrapper.style.height = `${calculatedHeight}px`;
+wrapper.style.width = `${calculatedWidth}px`;
+scrollable.style.maxHeight = `${calculatedHeight}px`;
+
+displayRecievedMessage('This is a sample recieved message');
+
+window.onresize = () => {
+    const wrapper = document.getElementById('wrapper');
+    const scrollable = document.getElementById('scrollable');
+    const calculatedHeight = Math.floor(window.innerHeight * 0.720);
+    const calculatedWidth = (window.innerWidth * 0.684);    
+
+    wrapper.style.height = `${calculatedHeight}px`;
+    wrapper.style.width = `${calculatedWidth}px`;
+    scrollable.style.maxHeight = `${calculatedHeight}px`;
+}

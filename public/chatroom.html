@@ -57,12 +57,20 @@
                     <p style="color: gray;" id="contact-name"></p>
                 </span>
             </div>
-            <div class="chats-content">
-                
+
+            <!-- main chat container -->
+            <div class="chats-content" id="chat-content">
+                <div class="no-message" id="no-message"><h1>No messages</h1></div>
+                <div class="wrapper" id="wrapper" style="display: none;">
+                    <div class="scrollable" id="scrollable">
+                        <!-- messages here -->
+                    </div>
+                </div>
             </div>
+
             <div class="action-content">
-                <input type="text" placeholder="message here...">
-                <button>Send</button>
+                <input id="message-input" type="text" placeholder="message here...">
+                <button id="send">Send</button>
             </div>
         </div>
     </main>
