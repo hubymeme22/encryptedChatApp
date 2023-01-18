@@ -1,8 +1,10 @@
-import { addContact, getUserDetails } from './modules/expanded.js';
+import { addContact, getChatDetails, getUserDetails } from './modules/expanded.js';
 
 // retrieve the user information
 let userInfo = window.localStorage.getItem('raw-data');
 userInfo = JSON.parse(userInfo);
+
+let userChatInfo = {};
 
 // dynamic variables for page
 let currentButton = null;
@@ -54,20 +56,36 @@ function addChatUser(chatUsername) {
             currentButton.classList.remove('selected');
 
         currentButton = clickableUser;
-        getUserDetails(chatUsername,
-            function (jsonData) {
-                console.log(jsonData);
-                if (jsonData.existing)
-                    displayChatDetail(`@${chatUsername}`, jsonData.data.accountDetails.name);    
-            },
-            function (error) {
-                console.log(error);
-            });
+        getUserDetails(chatUsername, (jsonData) => {
+            if (jsonData.existing) {
+
+                // display the contact username with the ff. format
+                displayChatDetail(`@${chatUsername}`, jsonData.data.accountDetails.name);
+                const messages = userChatInfo[chatUsername];
+
+                // retrieve message from this contact and display
+                if (messages != [] || messages != null) {
+                    resetMessageContainer();
+                    messages.forEach(chat => {
+                        if (chat[2] == 'me')
+                            displaySentMessage(chat[0])
+                        else
+                            displayRecievedMessage(chat[0]);
+                    });
+                }
+
+            }
+        });
 
         // hide the 'no message' display if not yet hidden and display the chat
         document.getElementById('no-message').style.display = 'none';
         document.getElementById('wrapper').style.display = '';
     };
+}
+
+function resetMessageContainer() {
+    const contentContainer = document.getElementById('scrollable');
+    contentContainer.innerHTML = '';
 }
 
 // displays the message sent on the screen
@@ -179,6 +197,12 @@ contacts.forEach(usernameContact => {
     addChatUser(usernameContact);
 });
 
+getChatDetails((chatData) => {
+    if (chatData.data == null) return;
+    userChatInfo = chatData.data.messages;
+    console.log(userChatInfo);
+});
+
 // hardcoded fixed height and max-height
 const wrapper = document.getElementById('wrapper');
 const scrollable = document.getElementById('scrollable');
@@ -189,8 +213,6 @@ const calculatedWidth = (window.innerWidth * 0.684);
 wrapper.style.height = `${calculatedHeight}px`;
 wrapper.style.width = `${calculatedWidth}px`;
 scrollable.style.maxHeight = `${calculatedHeight}px`;
-
-displayRecievedMessage('This is a sample recieved message');
 
 window.onresize = () => {
     const wrapper = document.getElementById('wrapper');

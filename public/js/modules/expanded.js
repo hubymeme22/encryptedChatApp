@@ -36,5 +36,9 @@ function getUserDetails(username='', accept=acceptCallbackFormat, reject=rejectC
     request.getRequest('/public-details/' + username, accept, reject);
 }
 
+function getChatDetails(accept=acceptCallbackFormat, reject=rejectCallbackFormat) {
+    request.getRequest('/chats-data', accept, reject);
+}
 
-export { addContact, getUserDetails, login, signup }
+
+export { addContact, getChatDetails, getUserDetails, login, signup }
