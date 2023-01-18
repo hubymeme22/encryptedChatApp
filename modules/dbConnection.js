@@ -1,4 +1,5 @@
 const Accounts = require('../models/account');
+const Chats = require('../models/chat');
 
 // functions that executes the ff. callbacks
 // when the user already exist
@@ -41,7 +42,7 @@ function isAccountExisting(username, password,
 }
 
 // adds new contact to the account
-function addContact(accountUsername, contactUsername, key,
+function addContact(accountUsername, contactUsername, key, key1,
     existingCallback=(userData) => {},
     notExistingCallback=() => {},
     serverError=(error) => {}) {
@@ -49,6 +50,8 @@ function addContact(accountUsername, contactUsername, key,
     // upsert the data provided
     const findAccount = { 'username': accountUsername };
     const updateQuery = { '$set': { [`contacts.${contactUsername}`]: key }};
+    const findAccount1 = { 'username': contactUsername };
+    const updateQuery1 = { '$set': { [`contacts.${accountUsername}`]: key1 }};
     const upsert = { new: true, upsert: true };
 
     Accounts.findOneAndUpdate(findAccount, updateQuery, upsert)
@@ -56,7 +59,14 @@ function addContact(accountUsername, contactUsername, key,
             if (error) return serverError(error);
             if (!userData) return notExistingCallback();
 
-            return existingCallback(userData);
+            // update the contact's details
+            Accounts.findOneAndUpdate(findAccount1, updateQuery1, upsert)
+            .exec((error1, userData1) => {
+                if (error1) return serverError(error);
+                if (!userData1) return notExistingCallback();
+
+                existingCallback(userData);
+            });
         });
 }
 
@@ -74,10 +84,26 @@ function checkCombination(contactUsername, key,
         .catch(serverError);
 }
 
+function getUserMessages(username,
+    existingCallback=(msgData) => {},
+    notExistingCallback=() => {},
+    serverError=(error) => {}) {
+
+    Chats.findOne({ username: username })
+        .then(msgData => {
+            if (msgData == null) return notExistingCallback();
+            existingCallback(msgData);
+        })
+        .catch(error => {
+            serverError(error);
+            console.log(error);
+        });
+}
 
 module.exports = {
     addContact,
     checkCombination,
+    getUserMessages,
     isAccountExisting,
     isUserExisting,
     registerAccount

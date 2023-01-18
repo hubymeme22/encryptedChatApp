@@ -93,6 +93,22 @@ app.get('/public-details/:username', (req, res) => {
         })
 });
 
+// retrieves all he current chat data of the
+app.get('/chats-data', middleware.validatePagePermission, (req, res) => {
+    const username = res.allowedData.username;
+    dbConn.getUserMessages(username,
+        function(msgData) {
+            res.json({ message: 'yes', error: null, data: msgData});
+        },
+        function() {
+            res.json({message: 'no', error: null, data: null});
+        },
+        function(error) {
+            res.status(500);
+            res.json({message: 'no', error: error, data: null});
+        })
+});
+
 /////////////////////
 //  POST requests  //
 /////////////////////
@@ -238,14 +254,15 @@ app.post('/add-contact', middleware.validatePOSTPermission, (req, res) => {
             existing: false,
             added: false,
             data: null,
-            error: error,
+            error: null,
             token: null
         });
     };
 
     // add to contacts if combination exists
+    const userKey = res.allowedData.accountDetails.key;
     const combinationMatched = (userID) => {
-        dbConn.addContact(accountUsername, params.contactUsername, params.key,
+        dbConn.addContact(accountUsername, params.contactUsername, params.key, userKey,
             function (userData) {
                 res.json({
                     existing: true,
