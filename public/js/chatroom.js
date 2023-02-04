@@ -1,14 +1,18 @@
-import { addContact, getChatDetails, getUserDetails } from './modules/expanded.js';
+import { addContact, getChatDetails, getUserDetails, getUserWSNumber } from './modules/expanded.js';
+import * as edCryptor from './modules/experimental-encryption.js';
+import * as messenger from './modules/encryptedMessenger.js';
 
 // retrieve the user information
 let userInfo = window.localStorage.getItem('raw-data');
 userInfo = JSON.parse(userInfo);
 
+// all current chat details
 let userChatInfo = {};
 
 // dynamic variables for page
 let currentButton = null;
-let currentChat = null;
+let targetChatUser = null;
+let targetChatKey = null;
 
 // use the specified username as the username
 function displayUsername(username) {
@@ -56,12 +60,18 @@ function addChatUser(chatUsername) {
             currentButton.classList.remove('selected');
 
         currentButton = clickableUser;
+
+        // this part is for display
         getUserDetails(chatUsername, (jsonData) => {
             if (jsonData.existing) {
 
                 // display the contact username with the ff. format
                 displayChatDetail(`@${chatUsername}`, jsonData.data.accountDetails.name);
                 const messages = userChatInfo[chatUsername];
+
+                // assign the target username for chat
+                targetChatUser = chatUsername;
+                targetChatKey = userInfo.contacts[chatUsername];
 
                 // retrieve message from this contact and display
                 if (messages != [] || messages != null) {
@@ -73,7 +83,6 @@ function addChatUser(chatUsername) {
                             displayRecievedMessage(chat[0]);
                     });
                 }
-
             }
         });
 
@@ -152,6 +161,11 @@ document.getElementById('cancel').onclick = () => {
 
 document.getElementById('send').onclick = () => {
     const messageBox = document.getElementById('message-input');
+
+    // send to server for request handling
+    messenger.sendMessage(targetChatUser, targetChatKey, messageBox.value);
+
+    // for user interface display
     displaySentMessage(messageBox.value);
     messageBox.value = '';
 };
@@ -186,21 +200,27 @@ document.getElementById('check').onclick = () => {
 ///////////////////////
 //  initializations  //
 ///////////////////////
-console.log(userInfo);
 displayUsername(userInfo.username);
 displayName(userInfo.accountDetails.name);
 
 // displays each chat on screen
 const contacts = Object.keys(userInfo.contacts);
 contacts.forEach(usernameContact => {
-    console.log(usernameContact);
     addChatUser(usernameContact);
 });
 
+// retrieves all the chat history
 getChatDetails((chatData) => {
     if (chatData.data == null) return;
     userChatInfo = chatData.data.messages;
-    console.log(userChatInfo);
+});
+
+// retrieve code number for chat encryption
+getUserWSNumber((jsonData) => {
+    if (jsonData.access) {
+        edCryptor.assignNumber(jsonData.wsKey);
+        messenger.assignAccDetails(userInfo.username, userInfo.accountDetails.key);
+    }
 });
 
 // hardcoded fixed height and max-height

@@ -40,5 +40,9 @@ function getChatDetails(accept=acceptCallbackFormat, reject=rejectCallbackFormat
     request.getRequest('/chats-data', accept, reject);
 }
 
+function getUserWSNumber(accept=acceptCallbackFormat, reject=rejectCallbackFormat) {
+    request.getRequest('/ws-key', accept, reject);
+}
 
-export { addContact, getChatDetails, getUserDetails, login, signup }
+
+export { addContact, getChatDetails, getUserDetails, getUserWSNumber, login, signup }
