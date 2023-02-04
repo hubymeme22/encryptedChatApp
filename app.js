@@ -1,11 +1,15 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const Account = require('./models/account');
 
+const mongoose = require('mongoose');
+const Account = require('./models/account');
+const wsocket = require('ws');
+
+const jwt = require('jsonwebtoken');
 const middleware = require('./middleware/validate');
 const dbConn = require('./modules/dbConnection');
+const keyHandler = require('./modules/clientKeyHandler');
+const serverHandler = require('./modules/serverHandler');
 
 const app = express();
 
@@ -16,6 +20,7 @@ require('dotenv').config();
 const uri = process.env.MONGODBURI;
 const serverIP = process.env.IP;
 const serverPort = process.env.PORT;
+const wsPort = process.env.WS_PORT;
 
 // uri for database connection
 // connect to database first
@@ -30,6 +35,14 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         app.listen(serverPort, serverIP, () => {
             console.log(`[+] Server started at http://${serverIP}:${serverPort}`);
         });
+
+        // also start the websocket server
+        const wsServer = new wsocket.Server({ host: serverIP, port: wsPort });
+        console.log(`[+] WSocket Server started at ws://${serverIP}:${wsPort}`);
+
+        // use the server handler for this server
+        serverHandler.setProxyServer(wsServer);
+        serverHandler.handleServer(wsServer);
     })
 
     .catch((err) => {
@@ -107,6 +120,18 @@ app.get('/chats-data', middleware.validatePagePermission, (req, res) => {
             res.status(500);
             res.json({message: 'no', error: error, data: null});
         })
+});
+
+// gets the number generated for encryption
+app.get('/ws-key', middleware.validateGETPermission, (req, res) => {
+    const username = res.allowedData.username;
+    const key = res.allowedData.accountDetails.key;
+
+    const keyGenerated = keyHandler.generateKey(username, key);
+    res.json({
+        access: true,
+        wsKey: keyGenerated
+    });
 });
 
 /////////////////////
