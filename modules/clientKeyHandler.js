@@ -9,7 +9,7 @@ const userEncryptionMap = {};
 
 const generateKey = (username, key) => {
     if (userNumberMap[username] != null)
-        return userNumberMap[username];
+        return userNumberMap[username][0];
 
     const generatedNumber = Math.ceil(Math.random() * 5064);
     userNumberMap[username] = [generatedNumber, key];
