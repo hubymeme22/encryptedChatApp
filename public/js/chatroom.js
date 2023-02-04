@@ -11,8 +11,6 @@ let userChatInfo = {};
 
 // dynamic variables for page
 let currentButton = null;
-let targetChatUser = null;
-let targetChatKey = null;
 
 // use the specified username as the username
 function displayUsername(username) {
@@ -70,17 +68,19 @@ function addChatUser(chatUsername) {
                 const messages = userChatInfo[chatUsername];
 
                 // assign the target username for chat
-                targetChatUser = chatUsername;
-                targetChatKey = userInfo.contacts[chatUsername];
+                messenger.assignContactDetails(chatUsername, userInfo.contacts[chatUsername]);
 
                 // retrieve message from this contact and display
                 if (messages != [] || messages != null) {
                     resetMessageContainer();
                     messages.forEach(chat => {
-                        if (chat[2] == 'me')
-                            displaySentMessage(chat[0])
-                        else
-                            displayRecievedMessage(chat[0]);
+                        if (chat[2] == 'me') {
+                            const message = messenger.decryptMyMessage(chat[0]);
+                            displaySentMessage(message)
+                        } else {
+                            const message = messenger.decryptConMessage(chat[0]);
+                            displayRecievedMessage(message);
+                        }
                     });
                 }
             }
@@ -127,6 +127,9 @@ function displayRecievedMessage(message) {
 
     chatContainer.appendChild(messageHolder);
     contentContainer.appendChild(chatContainer);
+
+    const scrollable = document.getElementById('wrapper');
+    scrollable.scrollTop = scrollable.scrollHeight;
 }
 
 function getContactValues() {
@@ -163,7 +166,7 @@ document.getElementById('send').onclick = () => {
     const messageBox = document.getElementById('message-input');
 
     // send to server for request handling
-    messenger.sendMessage(targetChatUser, targetChatKey, messageBox.value);
+    messenger.sendMessage(messageBox.value);
 
     // for user interface display
     displaySentMessage(messageBox.value);
@@ -207,6 +210,11 @@ displayName(userInfo.accountDetails.name);
 const contacts = Object.keys(userInfo.contacts);
 contacts.forEach(usernameContact => {
     addChatUser(usernameContact);
+});
+
+// set the process whenever a user recieves a message
+messenger.setOnMessage(data => {
+    displayRecievedMessage(data);
 });
 
 // retrieves all the chat history
