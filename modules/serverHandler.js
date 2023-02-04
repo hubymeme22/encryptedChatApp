@@ -1,20 +1,25 @@
 const keyHandler = require('./clientKeyHandler');
+const dbConn = require('./dbConnection');
 
 // websocket server that will act as proxy
 let webSocketProxyServer = null;
 
 // function that acts as proxy and forwards client commands
-const forwardMessage = (contactUsername, message) => {
+const forwardMessage = (username, contactUsername, message) => {
     if (webSocketProxyServer == null)
         return console.error('[-] Cannot forward (webSocketServer not set)');
 
-    // forwards the message to the clients with specified username
-    webSocketProxyServer.clients.forEach(client => {
-        if (client.username == contactUsername) {
-            console.log(`[proxy] forward pckt: ${contactUsername} ${message}`);
-            client.send(message);
-        }
-    });
+    // updates the message on the database first before sending
+    dbConn.updateMessage(username, contactUsername, message,
+        function(msgData) {
+            // forwards the message to the clients with specified username
+            console.log(`[proxy] forward pckt: from(${username}) to(${contactUsername}) ${message}`);
+            webSocketProxyServer.clients.forEach(client => {
+                if (client.username == contactUsername) {
+                    client.send(message);
+                }
+            });
+        });
 };
 
 // handle client message
@@ -37,7 +42,7 @@ const handleClientMessage = (dataString) => {
     // derived details from the second layer
     const contactUsername = secondLayerDetails[0];
     const encryptedMessageToForward = secondLayerDetails[1];
-    forwardMessage(contactUsername, encryptedMessageToForward);
+    forwardMessage(username, contactUsername, encryptedMessageToForward);
 };
 
 // for handling websocket server
