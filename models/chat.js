@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const chatSchema = mongoose.Schema({
     username: String,
-    contacts: {
+    messages: {
         type: Map,
         contactUsername: [{
             type: mongoose.Schema.Types.Mixed,

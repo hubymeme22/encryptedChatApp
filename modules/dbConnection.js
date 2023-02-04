@@ -24,7 +24,16 @@ function registerAccount(credentialsJSON,
     error=(error) => {}) {
 
     const newAccount = new Accounts(credentialsJSON);
-    newAccount.save().then(successful).catch(error);
+    const newChat = new Chats({
+        username: credentialsJSON.username,
+        messages: {
+        }
+    });
+
+    // create account for both accounts and chat collection
+    newAccount.save().then(data => {
+        newChat.save().then(successful).catch(error);
+    }).catch(error);
 }
 
 // checks if the credentials matches
@@ -100,11 +109,45 @@ function getUserMessages(username,
         });
 }
 
+// updates message for both sides on database
+function updateMessage(username, contactUsername, message,
+    existingCallback=(msgData) => {},
+    notExistingCallback=() => {},
+    serverError=(error) => {}) {
+
+    // upsert data for chats
+    const findUserChat = { username: username };
+    const userQuery = { '$push': { [`messages.${contactUsername}`]: [message, Date.now(), 'me'] } };
+
+    const findContactChat = { username: contactUsername };
+    const contactQuery = { '$push': { [`messages.${username}`]: [message, Date.now(), 'con'] } };
+
+    const upsert = { new: true, upsert: true };
+
+    // execute the queries below
+    Chats.findOneAndUpdate(findUserChat, userQuery, upsert)
+        .exec((error, userData) => {
+            if (error) return serverError(error);
+            if (!userData) return notExistingCallback();
+
+            Chats.findOneAndUpdate(findContactChat, contactQuery, upsert)
+                .exec((error, userData) => {
+                    if (error) return serverError(error);
+                    if (!userData) return notExistingCallback();
+
+                    existingCallback(userData);
+                });
+
+        });
+
+}
+
 module.exports = {
     addContact,
     checkCombination,
     getUserMessages,
     isAccountExisting,
     isUserExisting,
-    registerAccount
+    registerAccount,
+    updateMessage
 };
