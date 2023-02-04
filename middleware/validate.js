@@ -48,6 +48,33 @@ function validatePagePermission(req, res, next) {
     });
 }
 
+// validates token before accessing get request
+function validateGETPermission(req, res, next) {
+    // get the cookie and check if this cookie is valid
+    const cookies = req.cookies;
+    if (cookies.token == null) {
+        res.status(403);
+        res.json({access: false});
+        return;
+    }
+
+    // verifies the token
+    jwt.verify(cookies.token, process.env.SIGNATURE_KEY, (err, decoded) => {
+        if (err) {
+            // redirect to no permission page
+            res.status(403);
+            res.json({access: false});
+            return;
+        }
+
+        // allow the process
+        res.allowedData = decoded.userData;
+        next();
+    });
+}
+
+
+
 // validates the token for POST requests
 function validatePOSTPermission(req, res, next) {
     // get the cookie and check if this cookie is valid
@@ -75,6 +102,7 @@ function validatePOSTPermission(req, res, next) {
 
 
 module.exports = {
+    validateGETPermission,
     validatePagePermission,
     validatePOSTPermission,
     validateRegister
